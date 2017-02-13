@@ -6,10 +6,6 @@ A plugin for the V-REP simulator that enables connecting a drone model in V-REP 
 
     sudo apt-get install cmake ninja-build git
 
-The following packages are only needed for regenerating mavlink source (i.e. probably not you):
-
-    sudo apt-get install python python-future
-
 ## Build & Install Instructions
 
 Download V-REP if you haven't already.
