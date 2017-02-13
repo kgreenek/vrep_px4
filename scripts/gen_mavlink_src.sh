@@ -1,7 +1,8 @@
 #!/bin/bash
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-MAVLINK_INSTALL_DIR="$DIR/../src/mavlink/"
+MAVLINK_INSTALL_DIR="$DIR/../vendor/mavlink/include/"
 TMP_DIR=$(mktemp -d)
+PYTHONPATH=$PYTHONPATH:$TMP_DIR/mavlink
 echo "Creating tmp dir ${TMP_DIR}..."
 cd $TMP_DIR
 if ! git clone https://github.com/mavlink/mavlink ; then
@@ -9,7 +10,6 @@ if ! git clone https://github.com/mavlink/mavlink ; then
   echo "ERROR: Could not clone mavlink"
   exit 1
 fi
-PYTHONPATH=$PYTHONPATH:$TMP_DIR/mavlink
 cd mavlink
 if ! git submodule update --init --recursive ; then
   rm -rf $TMP_DIR
