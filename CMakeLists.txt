@@ -11,4 +11,4 @@ add_subdirectory(v_repExtPx4)
 
 #-------------------------------------------------------------------------------
 # Install models
-install(FILES "models/PX4 Quadrotor.ttm" DESTINATION "models/robots/mobile")
+install(FILES "models/PX4 Quadricopter.ttm" DESTINATION "models/robots/mobile")
