@@ -5,8 +5,12 @@ project(VREPPX4 VERSION 0.1.0 LANGUAGES CXX)
 
 #-------------------------------------------------------------------------------
 # Build v_repExtPX4 lib
-add_library(v_repExtPX4 STATIC
+add_library(v_repExtPX4 SHARED
   "src/plugin.cpp")
 target_include_directories(v_repExtPX4 PRIVATE "src")
-target_link_libraries(v_repExtPX4 mavlink)
-install(TARGETS v_repExtPX4 DESTINATION "${CMAKE_INSTALL_PREFIX}")
+target_link_libraries(v_repExtPX4
+  mavlink
+  vrepplugin)
+install(TARGETS v_repExtPX4
+  DESTINATION "${CMAKE_INSTALL_PREFIX}"
+  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ)

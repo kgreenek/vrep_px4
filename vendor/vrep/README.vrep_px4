@@ -1,0 +1,9 @@
+Date Added: 2/17/2017
+Version: 3.3.2
+License: ???
+Location: http://coppeliarobotics.com/files/V-REP_PLAYER_V3_3_2_64_Linux.tar.gz
+Modifications:
+  * Copy headers from "V-REP_PLAYER_V3_3_2_64_Linux/programming/include" to "include/vrep"
+  * Copy sources from "V-REP_PLAYER_V3_3_2_64_Linux/programming/common" to "src"
+  * Add CMakeLists.txt
+  * Fix hardcoded #include paths in v_repLib.cpp
