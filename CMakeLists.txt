@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 add_library(mavlink INTERFACE)
 target_include_directories(mavlink INTERFACE "vendor/mavlink/include")
 
+add_subdirectory("vendor/vrep")
+
 #-------------------------------------------------------------------------------
 # Build sub-directories
 add_subdirectory(v_repExtPx4)
