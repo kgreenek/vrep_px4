@@ -1,12 +1,15 @@
 #include "plugin.h"
 
+#include <cassert>
 #include <cstring>
 
 #include <iostream>
 #include <string>
 
-#include "vrep/scriptFunctionData.h"
-#include "vrep/v_repLib.h"
+#include <vrep/scriptFunctionData.h>
+#include <vrep/v_repLib.h>
+
+#include "mavlink_server.h"
 
 #ifdef _WIN32
   #ifdef QT_COMPIL
@@ -28,7 +31,8 @@ const std::string kPluginName = "PX4";
 // TODO(kgreenek): Pass this in from cmake-generated config file.
 constexpr int kMinVrepVersion = 30200;
 
-LIBRARY vrepLib;
+LIBRARY vrep_lib;
+std::unique_ptr<MavlinkServer> mavlink_server;
 
 void PrintInfo(std::string message) {
   std::cout << "INFO (" << kPluginName << "): " << message << std::endl;
@@ -66,29 +70,33 @@ std::string VrepLibPath() {
 }  // namespace
 
 VREP_DLLEXPORT unsigned char v_repStart(void *reserved_ptr, int reserved_int) {
-  vrepLib = loadVrepLibrary(VrepLibPath().c_str());
-  if (vrepLib == nullptr) {
+  vrep_lib = loadVrepLibrary(VrepLibPath().c_str());
+  if (vrep_lib == nullptr) {
     PrintError("Failed to start: Could not find find or correctly load v_rep lib");
     return 0;
   }
-  if (getVrepProcAddresses(vrepLib) == 0) {
+  if (getVrepProcAddresses(vrep_lib) == 0) {
     PrintError("Failed to start: Could not find all required functions in v_rep lib");
-    unloadVrepLibrary(vrepLib);
+    unloadVrepLibrary(vrep_lib);
     return 0;
   }
   int vrep_version;
   simGetIntegerParameter(sim_intparam_program_version, &vrep_version);
   if (vrep_version < kMinVrepVersion) {
     PrintError("Failed to start: VREP version too old (3.2.0 or higher is required)");
-    unloadVrepLibrary(vrepLib);
+    unloadVrepLibrary(vrep_lib);
     return 0;
   }
+  mavlink_server = std::make_unique<MavlinkServer>(14560);
+  mavlink_server->start();
   // TODO(kgreenek): Import the version that is returned here from cmake config.
   return 1;
 }
 
 VREP_DLLEXPORT void v_repEnd() {
-  unloadVrepLibrary(vrepLib);
+  assert(mavlink_server);
+  mavlink_server->stop();
+  unloadVrepLibrary(vrep_lib);
 }
 
 VREP_DLLEXPORT void *v_repMessage(int message, int *auxiliary_data, void *custom_data,
